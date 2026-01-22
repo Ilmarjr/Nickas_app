@@ -1,0 +1,56 @@
+# General
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.log
+*.swp
+.metadata
+
+# Python / Backend
+__pycache__/
+*.py[cod]
+*$py.class
+venv/
+.venv/
+env/
+.env
+.pytest_cache/
+*.sqlite3
+*.db
+sql_app.db
+
+# Flutter / Frontend
+.dart_tool/
+.packages
+build/
+.pub-cache/
+.flutter-plugins
+.flutter-plugins-dependencies
+
+# Android
+android/gradle/
+android/gradle/wrapper/gradle-wrapper.properties
+android/.gradle
+*/*/android/local.properties
+android/app/build/
+android/captures/
+
+# iOS
+ios/Flutter/App.framework
+ios/Flutter/Flutter.framework
+ios/Flutter/Generated.xcconfig
+ios/Flutter/app.flx
+ios/Flutter/app.zip
+ios/ServiceDefinitions.json
+ios/Pods/
+ios/Podfile.lock
+
+# Windows
+windows/flutter/ephemeral/
+
+# Linux
+linux/flutter/ephemeral/
+
+# Macos
+macos/flutter/ephemeral/

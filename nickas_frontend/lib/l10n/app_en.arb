@@ -1,0 +1,38 @@
+{
+  "appTitle": "Nickas Lists",
+  "settings": "Settings",
+  "theme": "Appearance",
+  "themeSystem": "System",
+  "themeLight": "Light",
+  "themeDark": "Dark",
+  "language": "Language",
+  "logout": "Logout",
+  "logoutConfirmTitle": "Logout?",
+  "logoutConfirmMessage": "You will need to login again.",
+  "cancel": "Cancel",
+  "delete": "Delete",
+  "deleteSelected": "Delete Selected",
+  "newList": "New List",
+  "pending": "Pending",
+  "completed": "Completed",
+  "selectAll": "Select All",
+  "selected": "selected",
+  "emptyList": "Your list is empty",
+  "total": "Total",
+  "items": "items",
+  "addItem": "Add Item",
+  "editItem": "Edit Item",
+  "save": "Save",
+  "name": "Name",
+  "brand": "Brand",
+  "quantity": "Qty",
+  "price": "Price",
+  "deleteConfirmMessage": "Are you sure you want to delete {count} items? This action cannot be undone.",
+  "@deleteConfirmMessage": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  }
+}
