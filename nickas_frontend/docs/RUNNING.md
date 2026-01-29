@@ -36,6 +36,24 @@ To log in, use the pre-configured admin user:
 1. Ensure `nickas_backend` is running at `http://127.0.0.1:8000`.
 2. See `../nickas_backend/docs/RUNNING.md` for backend instructions.
 
+## Environment Configuration
+
+The application supports rapid switching between Development (Local Backend) and Production (Remote Backend) environments via the `.env` file.
+
+1.  Locate or create the `.env` file in the `nickas_frontend` root directory.
+2.  Set the `ENVIRONMENT` variable:
+
+    **For Development (connects to localhost/10.0.2.2):**
+    ```properties
+    ENVIRONMENT=dev
+    ```
+
+    **For Production (connects to Render):**
+    ```properties
+    ENVIRONMENT=prod
+    ```
+    *(Note: `API_BASE_URL` in `.env` is used when in `prod` mode).*
+
 ## Running the App
 
 To run the app in debug mode on your connected device or emulator:

@@ -11,7 +11,12 @@ import 'presentation/providers/language_provider.dart';
 import 'presentation/screens/home_screen.dart';
 import 'presentation/screens/login_screen.dart';
 
-void main() {
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+
+Future<void> main() async {
+  // Load .env file
+  await dotenv.load(fileName: ".env");
+
   if (Platform.isWindows || Platform.isLinux) {
     // Initialize FFI
     sqfliteFfiInit();

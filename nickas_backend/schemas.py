@@ -37,13 +37,16 @@ class ShoppingList(ShoppingListBase):
 
 class UserBase(BaseModel):
     email: str
+    username: str
 
 class UserCreate(UserBase):
     password: str
+    date_of_birth: datetime
 
 class User(UserBase):
     id: int
     is_active: bool
+    date_of_birth: Optional[datetime] = None
     lists: List[ShoppingList] = []
 
     class Config:

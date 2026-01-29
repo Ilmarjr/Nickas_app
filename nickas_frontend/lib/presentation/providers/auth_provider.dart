@@ -1,8 +1,9 @@
 import 'dart:convert';
-import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import '../../core/config/app_config.dart';
 
 class AuthProvider with ChangeNotifier {
   final _storage = const FlutterSecureStorage();
@@ -14,12 +15,7 @@ class AuthProvider with ChangeNotifier {
   String? get token => _token;
   String? get userId => _userId;
 
-  String get _baseUrl {
-    if (Platform.isAndroid) {
-      return 'http://10.0.2.2:8000';
-    }
-    return 'http://127.0.0.1:8000';
-  }
+  String get _baseUrl => AppConfig.baseUrl;
 
   Future<bool> login(String username, String password) async {
     try {
@@ -48,12 +44,22 @@ class AuthProvider with ChangeNotifier {
     }
   }
 
-  Future<bool> register(String email, String password) async {
+  Future<bool> register(
+    String email,
+    String password,
+    String username,
+    DateTime dateOfBirth,
+  ) async {
     try {
       final response = await http.post(
         Uri.parse('$_baseUrl/register'),
         headers: {'Content-Type': 'application/json'},
-        body: json.encode({'email': email, 'password': password}),
+        body: json.encode({
+          'email': email,
+          'password': password,
+          'username': username,
+          'date_of_birth': dateOfBirth.toIso8601String(),
+        }),
       );
 
       if (response.statusCode == 200) {

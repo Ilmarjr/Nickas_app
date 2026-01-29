@@ -66,13 +66,38 @@ async def get_current_user(token: str = Depends(oauth2_scheme), db: Session = De
         raise credentials_exception
     return user
 
+import re
+
+# ... existing code ...
+
 @app.post("/register", response_model=schemas.User)
 def create_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
+    # 1. Validate Email
+    email_regex = r"^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$"
+    if not re.match(email_regex, user.email):
+         raise HTTPException(status_code=400, detail="Invalid email format")
+
+    # 2. Validate Password Length
+    if len(user.password) < 8:
+         raise HTTPException(status_code=400, detail="Password must be at least 8 characters long")
+
+    # 3. Check for existing email
     db_user = get_user_by_email(db, email=user.email)
     if db_user:
         raise HTTPException(status_code=400, detail="Email already registered")
+    
+    # 4. Check for existing username
+    db_username = db.query(models.User).filter(models.User.username == user.username).first()
+    if db_username:
+        raise HTTPException(status_code=400, detail="Username already taken")
+
     hashed_password = get_password_hash(user.password)
-    db_user = models.User(email=user.email, hashed_password=hashed_password)
+    db_user = models.User(
+        email=user.email,
+        hashed_password=hashed_password,
+        username=user.username,
+        date_of_birth=user.date_of_birth
+    )
     db.add(db_user)
     db.commit()
     db.refresh(db_user)

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/auth_provider.dart';
+import 'package:intl/intl.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -13,7 +14,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
+  final _usernameController =
+      TextEditingController(); // Added username controller
   final _formKey = GlobalKey<FormState>();
+
+  DateTime? _dateOfBirth; // Added date of birth
+
   bool _isLoading = false;
   String? _errorMessage;
 
@@ -22,11 +28,33 @@ class _RegisterScreenState extends State<RegisterScreen> {
     _emailController.dispose();
     _passwordController.dispose();
     _confirmPasswordController.dispose();
+    _usernameController.dispose();
     super.dispose();
+  }
+
+  Future<void> _selectDate(BuildContext context) async {
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: DateTime(2000),
+      firstDate: DateTime(1900),
+      lastDate: DateTime.now(),
+    );
+    if (picked != null && picked != _dateOfBirth) {
+      setState(() {
+        _dateOfBirth = picked;
+      });
+    }
   }
 
   Future<void> _submit() async {
     if (!_formKey.currentState!.validate()) return;
+
+    if (_dateOfBirth == null) {
+      setState(() {
+        _errorMessage = 'Please select a date of birth';
+      });
+      return;
+    }
 
     if (_passwordController.text != _confirmPasswordController.text) {
       setState(() {
@@ -44,6 +72,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
     final success = await authProvider.register(
       _emailController.text.trim(),
       _passwordController.text.trim(),
+      _usernameController.text.trim(),
+      _dateOfBirth!,
     );
 
     if (mounted) {
@@ -62,7 +92,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
         }
       } else {
         setState(() {
-          _errorMessage = 'Registration failed. Email might be taken.';
+          _errorMessage =
+              'Registration failed. Email or Username might be taken.';
         });
       }
     }
@@ -125,6 +156,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             ],
                           ),
                         ),
+
+                      // Email Field
                       TextFormField(
                         controller: _emailController,
                         decoration: const InputDecoration(
@@ -133,11 +166,55 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           border: OutlineInputBorder(),
                         ),
                         keyboardType: TextInputType.emailAddress,
+                        validator: (value) {
+                          if (value == null || value.isEmpty)
+                            return 'Please enter email';
+                          // Basic email regex
+                          if (!RegExp(
+                            r"^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$",
+                          ).hasMatch(value)) {
+                            return 'Invalid email format';
+                          }
+                          return null;
+                        },
+                      ),
+                      const SizedBox(height: 16),
+
+                      // Username Field
+                      TextFormField(
+                        controller: _usernameController,
+                        decoration: const InputDecoration(
+                          labelText: 'Username',
+                          prefixIcon: Icon(Icons.person_outline),
+                          border: OutlineInputBorder(),
+                        ),
                         validator: (value) => value == null || value.isEmpty
-                            ? 'Please enter email'
+                            ? 'Please enter username'
                             : null,
                       ),
                       const SizedBox(height: 16),
+
+                      // Date of Birth Field
+                      InkWell(
+                        onTap: () => _selectDate(context),
+                        child: InputDecorator(
+                          decoration: const InputDecoration(
+                            labelText: 'Date of Birth',
+                            prefixIcon: Icon(Icons.calendar_today),
+                            border: OutlineInputBorder(),
+                          ),
+                          child: Text(
+                            _dateOfBirth == null
+                                ? 'Select Date'
+                                : DateFormat(
+                                    'yyyy-MM-dd',
+                                  ).format(_dateOfBirth!),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+
+                      // Password Field
                       TextFormField(
                         controller: _passwordController,
                         decoration: const InputDecoration(
@@ -146,11 +223,17 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           border: OutlineInputBorder(),
                         ),
                         obscureText: true,
-                        validator: (value) => value == null || value.isEmpty
-                            ? 'Please enter password'
-                            : null,
+                        validator: (value) {
+                          if (value == null || value.isEmpty)
+                            return 'Please enter password';
+                          if (value.length < 8)
+                            return 'Password must be at least 8 characters';
+                          return null;
+                        },
                       ),
                       const SizedBox(height: 16),
+
+                      // Confirm Password Field
                       TextFormField(
                         controller: _confirmPasswordController,
                         decoration: const InputDecoration(
@@ -164,6 +247,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             : null,
                       ),
                       const SizedBox(height: 24),
+
                       SizedBox(
                         width: double.infinity,
                         height: 48,
