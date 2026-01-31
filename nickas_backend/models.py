@@ -38,3 +38,30 @@ class Item(Base):
     is_checked = Column(Boolean, default=False)
     
     shopping_list = relationship("ShoppingList", back_populates="items")
+
+class Category(Base):
+    __tablename__ = "categories"
+
+    id = Column(String, primary_key=True, index=True) # UUID
+    name = Column(String)
+    color = Column(String) # Hex code
+    icon = Column(String, nullable=True) # Icon codepoint or name
+    user_id = Column(Integer, ForeignKey("users.id"))
+    
+    is_deleted = Column(Boolean, default=False)
+    last_synced = Column(DateTime, default=datetime.datetime.utcnow)
+
+class Transaction(Base):
+    __tablename__ = "transactions"
+
+    id = Column(String, primary_key=True, index=True) # UUID
+    description = Column(String)
+    amount = Column(Float)
+    date = Column(DateTime)
+    type = Column(String) # 'income' or 'expense'
+    category_id = Column(String, ForeignKey("categories.id"), nullable=True)
+    user_id = Column(Integer, ForeignKey("users.id"))
+    
+    is_deleted = Column(Boolean, default=False)
+    last_synced = Column(DateTime, default=datetime.datetime.utcnow)
+

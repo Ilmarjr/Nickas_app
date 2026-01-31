@@ -220,7 +220,55 @@ def delete_item(item_id: str, db: Session = Depends(get_db), current_user: model
      if not db_item:
         raise HTTPException(status_code=404, detail="Item not found")
      
+     
      db.delete(db_item)
      db.commit()
      return {"ok": True}
+
+# --- Finance Module (Categories & Transactions) ---
+
+@app.post("/categories/", response_model=schemas.Category)
+def create_category(cat_in: schemas.CategoryCreate, db: Session = Depends(get_db), current_user: models.User = Depends(get_current_user)):
+    db_cat = db.query(models.Category).filter(models.Category.id == cat_in.id).first()
+    if db_cat:
+        # Update
+        for key, value in cat_in.dict().items():
+            setattr(db_cat, key, value)
+        db_cat.user_id = current_user.id # Ensure ownership
+        db.commit()
+        db.refresh(db_cat)
+        return db_cat
+    
+    db_cat = models.Category(**cat_in.dict(), user_id=current_user.id)
+    db.add(db_cat)
+    db.commit()
+    db.refresh(db_cat)
+    return db_cat
+
+@app.get("/categories/", response_model=List[schemas.Category])
+def read_categories(db: Session = Depends(get_db), current_user: models.User = Depends(get_current_user)):
+    return db.query(models.Category).filter(models.Category.user_id == current_user.id).all()
+
+@app.post("/transactions/", response_model=schemas.Transaction)
+def create_transaction(trans_in: schemas.TransactionCreate, db: Session = Depends(get_db), current_user: models.User = Depends(get_current_user)):
+    db_trans = db.query(models.Transaction).filter(models.Transaction.id == trans_in.id).first()
+    if db_trans:
+        # Update
+        for key, value in trans_in.dict().items():
+            setattr(db_trans, key, value)
+        db_trans.user_id = current_user.id
+        db.commit()
+        db.refresh(db_trans)
+        return db_trans
+
+    db_trans = models.Transaction(**trans_in.dict(), user_id=current_user.id)
+    db.add(db_trans)
+    db.commit()
+    db.refresh(db_trans)
+    return db_trans
+
+@app.get("/transactions/", response_model=List[schemas.Transaction])
+def read_transactions(db: Session = Depends(get_db), current_user: models.User = Depends(get_current_user)):
+    return db.query(models.Transaction).filter(models.Transaction.user_id == current_user.id).all()
+
 

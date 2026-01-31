@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/auth_provider.dart';
+import '../../l10n/app_localizations.dart';
 import 'register_screen.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -54,6 +55,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Scaffold(
       body: Center(
         child: SingleChildScrollView(
@@ -93,7 +95,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                       const SizedBox(height: 8),
                       Text(
-                        'Welcome Back',
+                        l10n.welcomeBack,
                         style: Theme.of(context).textTheme.titleMedium
                             ?.copyWith(
                               color: Theme.of(
@@ -119,7 +121,13 @@ class _LoginScreenState extends State<LoginScreen> {
                               const SizedBox(width: 12),
                               Expanded(
                                 child: Text(
-                                  _errorMessage!,
+                                  // Error message currently comes from backend/logic in English usually.
+                                  // For basic "Invalid credentials" we can map it if it matches known string,
+                                  // otherwise show as is or user generic message.
+                                  // For now, let's try to show the localized generic if it matches our set error.
+                                  _errorMessage == 'Invalid email or password'
+                                      ? l10n.invalidCredentials
+                                      : _errorMessage!,
                                   style: const TextStyle(color: Colors.red),
                                 ),
                               ),
@@ -128,26 +136,26 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
                       TextFormField(
                         controller: _usernameController,
-                        decoration: const InputDecoration(
-                          labelText: 'Email',
-                          prefixIcon: Icon(Icons.email_outlined),
-                          border: OutlineInputBorder(),
+                        decoration: InputDecoration(
+                          labelText: l10n.email,
+                          prefixIcon: const Icon(Icons.email_outlined),
+                          border: const OutlineInputBorder(),
                         ),
                         validator: (value) => value == null || value.isEmpty
-                            ? 'Please enter email'
+                            ? l10n.enterEmail
                             : null,
                       ),
                       const SizedBox(height: 16),
                       TextFormField(
                         controller: _passwordController,
-                        decoration: const InputDecoration(
-                          labelText: 'Password',
-                          prefixIcon: Icon(Icons.lock_outline),
-                          border: OutlineInputBorder(),
+                        decoration: InputDecoration(
+                          labelText: l10n.password,
+                          prefixIcon: const Icon(Icons.lock_outline),
+                          border: const OutlineInputBorder(),
                         ),
                         obscureText: true,
                         validator: (value) => value == null || value.isEmpty
-                            ? 'Please enter password'
+                            ? l10n.enterPassword
                             : null,
                       ),
                       const SizedBox(height: 24),
@@ -164,7 +172,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                     strokeWidth: 2,
                                   ),
                                 )
-                              : const Text('Login'),
+                              : Text(l10n.login),
                         ),
                       ),
                       const SizedBox(height: 16),
@@ -176,7 +184,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             ),
                           );
                         },
-                        child: const Text("Don't have an account? Register"),
+                        child: Text(l10n.dontHaveAccount),
                       ),
                     ],
                   ),

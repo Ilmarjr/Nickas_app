@@ -96,4 +96,94 @@ class AppLocalizationsEn extends AppLocalizations {
   String deleteConfirmMessage(int count) {
     return 'Are you sure you want to delete $count items? This action cannot be undone.';
   }
+
+  @override
+  String get editTransaction => 'Edit Transaction';
+
+  @override
+  String get spendingAnalysis => 'Spending Analysis';
+
+  @override
+  String get login => 'Login';
+
+  @override
+  String get register => 'Register';
+
+  @override
+  String get email => 'Email';
+
+  @override
+  String get password => 'Password';
+
+  @override
+  String get welcomeBack => 'Welcome Back';
+
+  @override
+  String get dontHaveAccount => 'Don\'t have an account? Register';
+
+  @override
+  String get createAccount => 'Create Account';
+
+  @override
+  String get username => 'Username';
+
+  @override
+  String get birthDate => 'Date of Birth';
+
+  @override
+  String get invalidCredentials => 'Invalid email or password';
+
+  @override
+  String get financeTitle => 'Finances';
+
+  @override
+  String get income => 'Income';
+
+  @override
+  String get expense => 'Expense';
+
+  @override
+  String get balance => 'Balance';
+
+  @override
+  String get market => 'Market';
+
+  @override
+  String get uncategorized => 'Uncategorized';
+
+  @override
+  String get recentTransactions => 'Recent Transactions';
+
+  @override
+  String get viewAll => 'View All';
+
+  @override
+  String get newTransaction => 'New Transaction';
+
+  @override
+  String get editCategory => 'Edit Category';
+
+  @override
+  String get pickColor => 'Pick Color';
+
+  @override
+  String get description => 'Description';
+
+  @override
+  String get category => 'Category';
+
+  @override
+  String get enterEmail => 'Please enter email';
+
+  @override
+  String get enterPassword => 'Please enter password';
+
+  @override
+  String get enterUsername => 'Please enter username';
+
+  @override
+  String get invalidAmount => 'Invalid amount';
+
+  @override
+  String get fillAllFields => 'Please fill all fields';
 }

@@ -58,3 +58,35 @@ class Token(BaseModel):
 
 class TokenData(BaseModel):
     email: Optional[str] = None
+
+# Finance Schemas
+class CategoryBase(BaseModel):
+    name: str
+    color: str
+    icon: Optional[str] = None
+
+class CategoryCreate(CategoryBase):
+    id: str # UUID from frontend
+
+class Category(CategoryBase):
+    id: str
+    user_id: int
+    class Config:
+        orm_mode = True
+
+class TransactionBase(BaseModel):
+    description: str
+    amount: float
+    date: datetime
+    type: str # 'income' or 'expense'
+    category_id: Optional[str] = None
+
+class TransactionCreate(TransactionBase):
+    id: str # UUID from frontend
+
+class Transaction(TransactionBase):
+    id: str
+    user_id: int
+    class Config:
+        orm_mode = True
+
