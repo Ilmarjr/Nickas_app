@@ -3,17 +3,36 @@ import '../../domain/entities/shopping_list.dart';
 import '../../domain/entities/item.dart';
 import '../../data/datasources/database_helper.dart';
 import '../../data/services/api_service.dart';
+import 'finance_provider.dart';
 
 class ShoppingListProvider with ChangeNotifier {
   List<ShoppingList> _lists = [];
   bool _isLoading = false;
   String _currentUserId = '';
   ApiService? _apiService;
+  FinanceProvider? _financeProvider;
 
   List<ShoppingList> get lists => _lists;
   bool get isLoading => _isLoading;
 
   final DatabaseHelper _dbHelper = DatabaseHelper();
+
+  /// Injeta a referência ao FinanceProvider para atualizar o mercado
+  /// sempre que itens forem adicionados/editados/deletados.
+  void setFinanceProvider(FinanceProvider? fp) {
+    _financeProvider = fp;
+  }
+
+  /// Calcula o total do mês atual em memória e atualiza o FinanceProvider
+  /// sem nenhuma consulta ao banco de dados.
+  void _notifyMarketExpense() {
+    if (_financeProvider == null) return;
+    final now = _financeProvider!.selectedDate;
+    final monthlyTotal = _lists
+        .where((l) => l.date.year == now.year && l.date.month == now.month)
+        .fold(0.0, (sum, l) => sum + (l.summaryTotal ?? 0.0));
+    _financeProvider!.setMarketExpense(monthlyTotal);
+  }
 
   void update(String? userId, String? token) {
     if (userId != null && userId != _currentUserId) {
@@ -212,7 +231,21 @@ class ShoppingListProvider with ChangeNotifier {
     await _dbHelper.insertItem(item.toMap());
     _currentItems.add(item);
     _sortItems();
+
+    // Atualiza summaryTotal em memória para a lista correta
+    final idx = _lists.indexWhere((l) => l.id == item.listId);
+    if (idx != -1) {
+      final old = _lists[idx];
+      _lists[idx] = ShoppingList(
+        id: old.id, name: old.name, date: old.date,
+        isDeleted: old.isDeleted, lastSynced: old.lastSynced,
+        items: old.items,
+        summaryTotal: (old.summaryTotal ?? 0.0) + item.price * item.quantity,
+      );
+    }
+
     notifyListeners();
+    _notifyMarketExpense();
   }
 
   Future<void> updateItem(Item item) async {
@@ -224,13 +257,35 @@ class ShoppingListProvider with ChangeNotifier {
       }
     }
 
+    // Calcula a diferença de valor para atualizar o total em memória
+    final oldItem = _currentItems.firstWhere(
+      (i) => i.id == item.id,
+      orElse: () => item,
+    );
+    final priceDiff = (item.price * item.quantity) -
+        (oldItem.price * oldItem.quantity);
+
     await _dbHelper.updateItem(item.toMap());
     int index = _currentItems.indexWhere((i) => i.id == item.id);
     if (index != -1) {
       _currentItems[index] = item;
       _sortItems();
-      notifyListeners();
     }
+
+    // Atualiza summaryTotal em memória
+    final idx = _lists.indexWhere((l) => l.id == item.listId);
+    if (idx != -1) {
+      final old = _lists[idx];
+      _lists[idx] = ShoppingList(
+        id: old.id, name: old.name, date: old.date,
+        isDeleted: old.isDeleted, lastSynced: old.lastSynced,
+        items: old.items,
+        summaryTotal: (old.summaryTotal ?? 0.0) + priceDiff,
+      );
+    }
+
+    notifyListeners();
+    _notifyMarketExpense();
   }
 
   Future<void> deleteItem(String id) async {
@@ -242,9 +297,27 @@ class ShoppingListProvider with ChangeNotifier {
       }
     }
 
+    // Remove o valor do item do summaryTotal em memória
+    final item = _currentItems.firstWhere(
+      (i) => i.id == id,
+      orElse: () => Item(id: id, listId: '', name: '', price: 0, quantity: 0),
+    );
+    final idx = _lists.indexWhere((l) => l.id == item.listId);
+    if (idx != -1) {
+      final old = _lists[idx];
+      _lists[idx] = ShoppingList(
+        id: old.id, name: old.name, date: old.date,
+        isDeleted: old.isDeleted, lastSynced: old.lastSynced,
+        items: old.items,
+        summaryTotal: ((old.summaryTotal ?? 0.0) - item.price * item.quantity)
+            .clamp(0.0, double.infinity),
+      );
+    }
+
     await _dbHelper.deleteItem(id);
     _currentItems.removeWhere((i) => i.id == id);
     notifyListeners();
+    _notifyMarketExpense();
   }
 
   void _sortItems() {

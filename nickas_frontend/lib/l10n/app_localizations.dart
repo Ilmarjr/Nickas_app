@@ -398,6 +398,30 @@ abstract class AppLocalizations {
   /// **'New Transaction'**
   String get newTransaction;
 
+  /// No description provided for @transactions.
+  ///
+  /// In en, this message translates to:
+  /// **'Transactions'**
+  String get transactions;
+
+  /// No description provided for @noTransactionsYet.
+  ///
+  /// In en, this message translates to:
+  /// **'No transactions yet'**
+  String get noTransactionsYet;
+
+  /// No description provided for @tabFinances.
+  ///
+  /// In en, this message translates to:
+  /// **'Finances'**
+  String get tabFinances;
+
+  /// No description provided for @tabShopping.
+  ///
+  /// In en, this message translates to:
+  /// **'Shopping'**
+  String get tabShopping;
+
   /// No description provided for @editCategory.
   ///
   /// In en, this message translates to:
@@ -451,18 +475,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Please fill all fields'**
   String get fillAllFields;
-
-  /// Label for transactions section
-  String get transactions;
-
-  /// Empty state message for transactions
-  String get noTransactionsYet;
-
-  /// Bottom navigation tab label for Finances
-  String get tabFinances;
-
-  /// Bottom navigation tab label for Shopping
-  String get tabShopping;
 }
 
 class _AppLocalizationsDelegate

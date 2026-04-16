@@ -37,15 +37,18 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(
           create: (_) => AuthProvider()..checkAuthStatus(),
         ),
-        ChangeNotifierProxyProvider<AuthProvider, ShoppingListProvider>(
-          create: (_) => ShoppingListProvider(),
-          update: (_, auth, shoppingListProvider) =>
-              shoppingListProvider!..update(auth.userId, auth.token),
-        ),
         ChangeNotifierProxyProvider<AuthProvider, FinanceProvider>(
           create: (_) => FinanceProvider(),
           update: (_, auth, financeProvider) =>
               financeProvider!..updateContext(auth.userId),
+        ),
+        ChangeNotifierProxyProvider2<AuthProvider, FinanceProvider,
+            ShoppingListProvider>(
+          create: (_) => ShoppingListProvider(),
+          update: (_, auth, finance, shoppingListProvider) =>
+              shoppingListProvider!
+                ..setFinanceProvider(finance)
+                ..update(auth.userId, auth.token),
         ),
       ],
       child: Consumer2<ThemeProvider, LanguageProvider>(

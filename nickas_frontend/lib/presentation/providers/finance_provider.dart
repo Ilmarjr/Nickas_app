@@ -72,6 +72,14 @@ class FinanceProvider with ChangeNotifier {
     notifyListeners();
   }
 
+  /// Atualiza APENAS o total do mercado sem consultar o banco —
+  /// recebe o valor já calculado em memória pelo ShoppingListProvider.
+  void setMarketExpense(double total) {
+    _marketExpense = total;
+    notifyListeners();
+  }
+
+  /// Fallback: recalcula via banco (usado no loadData e navegação de mês).
   Future<void> _calculateMarketExpense() async {
     final lists = await _dbHelper.getLists(_userId!);
 

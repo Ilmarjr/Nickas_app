@@ -161,6 +161,18 @@ class AppLocalizationsPt extends AppLocalizations {
   String get newTransaction => 'Nova Transação';
 
   @override
+  String get transactions => 'Transações';
+
+  @override
+  String get noTransactionsYet => 'Nenhuma transação ainda';
+
+  @override
+  String get tabFinances => 'Finanças';
+
+  @override
+  String get tabShopping => 'Compras';
+
+  @override
   String get editCategory => 'Editar Categoria';
 
   @override
@@ -186,16 +198,4 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get fillAllFields => 'Preencha todos os campos';
-
-  @override
-  String get transactions => 'Transações';
-
-  @override
-  String get noTransactionsYet => 'Nenhuma transação ainda';
-
-  @override
-  String get tabFinances => 'Finanças';
-
-  @override
-  String get tabShopping => 'Compras';
 }
