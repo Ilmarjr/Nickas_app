@@ -186,4 +186,16 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get fillAllFields => 'Preencha todos os campos';
+
+  @override
+  String get transactions => 'Transações';
+
+  @override
+  String get noTransactionsYet => 'Nenhuma transação ainda';
+
+  @override
+  String get tabFinances => 'Finanças';
+
+  @override
+  String get tabShopping => 'Compras';
 }

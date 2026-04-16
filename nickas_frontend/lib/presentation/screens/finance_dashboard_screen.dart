@@ -500,7 +500,7 @@ class _FinanceDashboardScreenState extends State<FinanceDashboardScreen> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      "Transactions",
+                      l10n.transactions,
                       style: theme.textTheme.titleMedium?.copyWith(
                         fontWeight: FontWeight.bold,
                       ),
@@ -525,7 +525,7 @@ class _FinanceDashboardScreenState extends State<FinanceDashboardScreen> {
                     child: Padding(
                       padding: const EdgeInsets.all(20),
                       child: Text(
-                        "No transactions yet",
+                        l10n.noTransactionsYet,
                         style: TextStyle(color: theme.hintColor),
                       ),
                     ),
@@ -586,6 +586,12 @@ class _FinanceDashboardScreenState extends State<FinanceDashboardScreen> {
                             case 'movie':
                               icon = Icons.movie;
                               break;
+                            case 'trending_up':
+                              icon = Icons.trending_up;
+                              break;
+                            case 'restaurant':
+                              icon = Icons.restaurant;
+                              break;
                             case 'category':
                               icon = Icons.category;
                               break;
@@ -598,6 +604,9 @@ class _FinanceDashboardScreenState extends State<FinanceDashboardScreen> {
                           if (name.contains('salário') ||
                               name.contains('salary'))
                             icon = Icons.work;
+                          else if (name.contains('investimento') ||
+                              name.contains('invest'))
+                            icon = Icons.trending_up;
                           else if (name.contains('aluguel') ||
                               name.contains('rent') ||
                               name.contains('casa'))
@@ -614,6 +623,11 @@ class _FinanceDashboardScreenState extends State<FinanceDashboardScreen> {
                           else if (name.contains('lazer') ||
                               name.contains('leisure'))
                             icon = Icons.movie;
+                          else if (name.contains('aliment') ||
+                              name.contains('comida') ||
+                              name.contains('restaur') ||
+                              name.contains('food'))
+                            icon = Icons.restaurant;
                           else
                             icon = Icons.category;
                         }

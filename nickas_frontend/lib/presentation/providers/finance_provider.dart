@@ -97,11 +97,12 @@ class FinanceProvider with ChangeNotifier {
 
   Future<void> _seedDefaultCategories() async {
     final defaults = [
-      {'name': 'Salário', 'color': '0xFF4CAF50', 'icon': 'work'}, // Green
+      {'name': 'Investimentos', 'color': '0xFF4CAF50', 'icon': 'trending_up'}, // Verde
       {'name': 'Aluguel', 'color': '0xFFFF5733', 'icon': 'home'},
       {'name': 'Transporte', 'color': '0xFF33C1FF', 'icon': 'directions_bus'},
-      {'name': 'Saúde', 'color': '0xFF33FF57', 'icon': 'fitness_center'},
+      {'name': 'Saúde', 'color': '0xFFE91E63', 'icon': 'fitness_center'},
       {'name': 'Lazer', 'color': '0xFFF3FF33', 'icon': 'movie'},
+      {'name': 'Alimentação', 'color': '0xFFFF9800', 'icon': 'restaurant'},
       {'name': 'Outros', 'color': '0xFF9E9E9E', 'icon': 'category'},
     ];
 

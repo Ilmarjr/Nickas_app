@@ -451,6 +451,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Please fill all fields'**
   String get fillAllFields;
+
+  /// Label for transactions section
+  String get transactions;
+
+  /// Empty state message for transactions
+  String get noTransactionsYet;
+
+  /// Bottom navigation tab label for Finances
+  String get tabFinances;
+
+  /// Bottom navigation tab label for Shopping
+  String get tabShopping;
 }
 
 class _AppLocalizationsDelegate
