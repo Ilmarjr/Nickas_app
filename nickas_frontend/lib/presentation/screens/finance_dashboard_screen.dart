@@ -217,7 +217,10 @@ class _FinanceDashboardScreenState extends State<FinanceDashboardScreen> {
           // Sort larger first for better visualization
           categoryEntries.sort((a, b) => b.value.compareTo(a.value));
 
-          return SingleChildScrollView(
+          return RefreshIndicator(
+            onRefresh: () => finance.loadData(),
+            child: SingleChildScrollView(
+            physics: const AlwaysScrollableScrollPhysics(),
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -728,7 +731,9 @@ class _FinanceDashboardScreenState extends State<FinanceDashboardScreen> {
                 const SizedBox(height: 80),
               ],
             ),
-          );
+          ), // SingleChildScrollView
+          ); // RefreshIndicator
+
         },
       ),
       floatingActionButton:
