@@ -41,22 +41,28 @@ class ShoppingListProvider with ChangeNotifier {
     // 1. Load local first for speed
     await _loadFromLocal();
 
-    // 2. If connected and refresh requested, fetch from API and sync
-    if (forceRefresh && _apiService != null) {
-      try {
-        final remoteLists = await _apiService!.fetchLists();
-        // Simple Sync: Server overwrites local for this user
-        // Ideally we would merge using 'lastSynced'
-        await _syncRemoteToLocal(remoteLists);
-        await _loadFromLocal(); // Reload updated data
-      } catch (e) {
-        print("Sync error: $e");
-        // Keep showing local data if sync fails
-      }
-    }
-
+    // Libera a tela com os dados locais imediatamente para não travar
     _isLoading = false;
     notifyListeners();
+
+    // 2. If connected and refresh requested, fetch from API and sync
+    if (forceRefresh && _apiService != null) {
+      _syncInBackground();
+    }
+  }
+
+  Future<void> _syncInBackground() async {
+    try {
+      final remoteLists = await _apiService!.fetchLists();
+      // Simple Sync: Server overwrites local for this user
+      // Ideally we would merge using 'lastSynced'
+      await _syncRemoteToLocal(remoteLists);
+      await _loadFromLocal(); // Reload updated data
+      notifyListeners();
+    } catch (e) {
+      print("Sync error: $e");
+      // Keep showing local data if sync fails
+    }
   }
 
   Future<void> _loadFromLocal() async {

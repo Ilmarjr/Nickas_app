@@ -7,6 +7,8 @@ import '../../l10n/app_localizations.dart';
 import 'transaction_form_screen.dart';
 import 'categories_screen.dart';
 import '../../data/models/finance_models.dart';
+import '../providers/auth_provider.dart';
+import 'settings_screen.dart';
 
 class FinanceDashboardScreen extends StatefulWidget {
   const FinanceDashboardScreen({super.key});
@@ -46,6 +48,31 @@ class _FinanceDashboardScreenState extends State<FinanceDashboardScreen> {
       }
     }
     _clearSelection();
+    _clearSelection();
+  }
+
+  void _showLogoutDialog(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: Text(l10n.logoutConfirmTitle),
+        content: Text(l10n.logoutConfirmMessage),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: Text(l10n.cancel),
+          ),
+          TextButton(
+            onPressed: () {
+              Provider.of<AuthProvider>(context, listen: false).logout();
+              Navigator.pop(ctx);
+            },
+            child: Text(l10n.logout, style: const TextStyle(color: Colors.red)),
+          ),
+        ],
+      ),
+    );
   }
 
   @override
@@ -64,6 +91,18 @@ class _FinanceDashboardScreenState extends State<FinanceDashboardScreen> {
         ),
         centerTitle: false,
         backgroundColor: Colors.transparent,
+        leading: _hasSelection
+            ? IconButton(
+                icon: const Icon(Icons.close),
+                onPressed: _clearSelection,
+              )
+            : IconButton(
+                icon: const Icon(Icons.category_outlined),
+                onPressed: () => Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => const CategoriesScreen()),
+                ),
+              ),
         actions: [
           if (_hasSelection)
             IconButton(
@@ -73,22 +112,57 @@ class _FinanceDashboardScreenState extends State<FinanceDashboardScreen> {
               ),
             )
           else ...[
-            IconButton(
-              icon: const Icon(Icons.category_outlined),
-              onPressed: () => Navigator.push(
-                context,
-                MaterialPageRoute(builder: (_) => const CategoriesScreen()),
+            PopupMenuButton<String>(
+              offset: const Offset(0, 48),
+              icon: CircleAvatar(
+                radius: 18,
+                backgroundColor: theme.colorScheme.primaryContainer,
+                child: Icon(
+                  Icons.person,
+                  size: 20,
+                  color: theme.colorScheme.primary,
+                ),
               ),
+              onSelected: (value) {
+                if (value == 'settings') {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (_) => const SettingsScreen()),
+                  );
+                } else if (value == 'logout') {
+                  _showLogoutDialog(context);
+                }
+              },
+              itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
+                PopupMenuItem<String>(
+                  value: 'settings',
+                  child: Row(
+                    children: [
+                      const Icon(Icons.settings, color: Colors.grey),
+                      const SizedBox(width: 12),
+                      Text(l10n.settings),
+                    ],
+                  ),
+                ),
+                const PopupMenuDivider(),
+                PopupMenuItem<String>(
+                  value: 'logout',
+                  child: Row(
+                    children: [
+                      const Icon(Icons.logout, color: Colors.red),
+                      const SizedBox(width: 12),
+                      Text(
+                        l10n.logout,
+                        style: const TextStyle(color: Colors.red),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
             ),
             const SizedBox(width: 8),
           ],
         ],
-        leading: _hasSelection
-            ? IconButton(
-                icon: const Icon(Icons.close),
-                onPressed: _clearSelection,
-              )
-            : null,
       ),
       body: Consumer<FinanceProvider>(
         builder: (context, finance, _) {
